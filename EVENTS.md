@@ -307,6 +307,22 @@ data   : {}
 |---|---|---|---|
 | `audit_log` | `Address` | topic | Audit-log contract address now receiving records |
 
+#### `AuditLogCleared`
+
+Emitted when `clear_audit_log(admin)` detaches the audit log so denylist
+mutations stop being recorded. Emitted even when no audit log was configured
+(`previous` is `None`).
+
+```
+topics : ["audit_log_cleared", <admin: Address>]
+data   : { "previous": <Option<Address>> }
+```
+
+| Field | Type | Placement | Description |
+|---|---|---|---|
+| `admin` | `Address` | topic | Admin that detached the audit log |
+| `previous` | `Option<Address>` | data | Audit-log contract that was detached, if any |
+
 ---
 
 ### `jurisdiction-flag`
