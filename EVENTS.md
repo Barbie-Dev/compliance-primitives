@@ -143,6 +143,53 @@ data   : {}
 | `old_admin` | `Address` | topic | Admin before the transfer (loses all privileges immediately) |
 | `new_admin` | `Address` | topic | Admin after the transfer |
 
+#### `ComplianceOfficerSet`
+
+Emitted when `set_compliance_officer(admin, officer)` assigns the
+compliance-officer role.
+
+```
+topics : ["compliance_officer_set", <admin: Address>, <officer: Address>]
+data   : { "previous": <Option<Address>> }
+```
+
+| Field | Type | Placement | Description |
+|---|---|---|---|
+| `admin` | `Address` | topic | Admin that made the change |
+| `officer` | `Address` | topic | Newly assigned compliance officer |
+| `previous` | `Option<Address>` | data | Officer that was replaced, if any |
+
+#### `ComplianceOfficerRevoked`
+
+Emitted when `revoke_compliance_officer(admin)` clears the compliance-officer
+role. Emitted even when no officer was assigned (`previous` is `None`).
+
+```
+topics : ["compliance_officer_revoked", <admin: Address>]
+data   : { "previous": <Option<Address>> }
+```
+
+| Field | Type | Placement | Description |
+|---|---|---|---|
+| `admin` | `Address` | topic | Admin that made the change |
+| `previous` | `Option<Address>` | data | Officer that was revoked, if any |
+
+#### `DelegatedAdminKeySet`
+
+Emitted when `set_delegated_admin_key(admin, pubkey)` registers or rotates
+the ed25519 key that may sign delegated admin actions.
+
+```
+topics : ["delegated_admin_key_set", <admin: Address>]
+data   : { "previous": <Option<BytesN<32>>>, "pubkey": <BytesN<32>> }
+```
+
+| Field | Type | Placement | Description |
+|---|---|---|---|
+| `admin` | `Address` | topic | Admin that made the change |
+| `previous` | `Option<BytesN<32>>` | data | Key that was replaced, if any |
+| `pubkey` | `BytesN<32>` | data | Newly registered delegated signing key |
+
 ---
 
 ### `denylist-gate`
