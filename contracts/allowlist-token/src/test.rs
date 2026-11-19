@@ -1049,6 +1049,25 @@ fn test_pause_blocks_remove_from_allowlist() {
 }
 
 #[test]
+fn test_pause_blocks_remove_multiple_from_allowlist() {
+    let env = Env::default();
+    let (admin, _token_id, _contract_id, client) = setup(&env);
+    let alice = Address::generate(&env);
+    let bob = Address::generate(&env);
+    client.add_multiple_to_allowlist(&admin, &vec![&env, alice.clone(), bob.clone()], &None);
+
+    client.pause(&admin);
+
+    assert_eq!(
+        client.try_remove_multiple_from_allowlist(&admin, &vec![&env, alice.clone(), bob.clone()]),
+        Err(Ok(Error::ContractPaused))
+    );
+    // Entries must still be there — the allowlist must stay frozen.
+    assert!(client.is_allowed(&alice));
+    assert!(client.is_allowed(&bob));
+}
+
+#[test]
 fn test_unpause_restores_allowlist_mutations() {
     let env = Env::default();
     let (admin, _token_id, _contract_id, client) = setup(&env);

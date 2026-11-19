@@ -447,11 +447,14 @@ impl AllowlistToken {
 
     /// Remove every address from the allowlist. Admin or compliance officer;
     /// each address emits an individual `AllowRemove` event.
+    ///
+    /// Returns `Err(ContractPaused)` if the contract is currently paused.
     pub fn remove_multiple_from_allowlist(
         env: Env,
         admin: Address,
         addresses: Vec<Address>,
     ) -> Result<(), Error> {
+        Self::reject_if_paused(&env)?;
         Self::require_compliance_authority(&env, &admin)?;
         if addresses.len() > MAX_BATCH_SIZE {
             return Err(Error::BatchTooLarge);
@@ -707,8 +710,9 @@ impl AllowlistToken {
     ///
     /// While paused:
     /// - `transfer` returns `Err(ContractPaused)`.
-    /// - `add_to_allowlist`, `add_to_allowlist_delegated`, and
-    ///   `remove_from_allowlist` return `Err(ContractPaused)`.
+    /// - `add_to_allowlist`, `add_to_allowlist_delegated`,
+    ///   `remove_from_allowlist`, and `remove_multiple_from_allowlist` return
+    ///   `Err(ContractPaused)`.
     ///
     /// The following are deliberately **not** blocked by pause so that an
     /// operator can always recover from an incident:
